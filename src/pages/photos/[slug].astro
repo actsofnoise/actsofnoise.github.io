@@ -1,0 +1,23 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+export async function getStaticPaths() {
+  const photos = await getCollection('photos', ({ data }) => !data.draft);
+  return photos.map((photo) => ({ params: { slug: photo.id }, props: { photo } }));
+}
+
+const { photo } = Astro.props;
+const formatDate = (value: Date) => value.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+<BaseLayout title={photo.data.title} current="photos">
+  <section class="page photo-page">
+    <div class="eyebrow">Fotografía</div>
+    <h1>{photo.data.title}</h1>
+    <img src={photo.data.image} alt={photo.data.description ?? photo.data.title} style="margin-top:32px" />
+    <div class="photo-info">
+      <span>{formatDate(photo.data.date)}{photo.data.location ? ` · ${photo.data.location}` : ''}</span>
+      {photo.data.description && <span>{photo.data.description}</span>}
+    </div>
+  </section>
+</BaseLayout>

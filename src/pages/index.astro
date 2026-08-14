@@ -1,0 +1,53 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostList from '../components/PostList.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const recent = posts.slice(0, 5);
+const photos = (await getCollection('photos', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 4);
+---
+<BaseLayout current="">
+  <section class="hero">
+    <div class="eyebrow">Sitio personal · sin prisa</div>
+    <h1>Una esquina para guardar cosas.</h1>
+    <p class="lede">Textos largos, fotografías, proyectos, música, caminos recorridos y cualquier otra cosa que merezca quedar por aquí. No hace falta que todo tenga una utilidad.</p>
+  </section>
+
+  <div class="home-grid page" style="padding-top:0">
+    <section>
+      <div class="section-head">
+        <h2>Entradas recientes</h2>
+        <a href="/blog/">ver todas →</a>
+      </div>
+      {recent.length ? <PostList posts={recent} /> : <p class="empty">Todavía no hay entradas.</p>}
+    </section>
+
+    <aside>
+      <div class="section-head"><h2>Una nota</h2></div>
+      <div class="note-box">
+        <p>Este sitio no intenta ser una vitrina profesional. Es más parecido a una estantería personal: algunas cosas están terminadas, otras no, y probablemente habrá objetos que nadie más entienda por qué siguen aquí.</p>
+        <p>El archivo importa más que la novedad.</p>
+      </div>
+
+      <div style="margin-top:55px">
+        <div class="section-head">
+          <h2>Fotografías</h2>
+          <a href="/photos/">ver archivo →</a>
+        </div>
+        <div class="photo-grid">
+          {photos.map((photo) => (
+            <article class="photo-card">
+              <a href={`/photos/${photo.id}/`}>
+                <img src={photo.data.image} alt={photo.data.description ?? photo.data.title} loading="lazy" />
+              </a>
+            </article>
+          ))}
+        </div>
+      </div>
+    </aside>
+  </div>
+</BaseLayout>

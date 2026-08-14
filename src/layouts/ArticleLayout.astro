@@ -1,0 +1,38 @@
+---
+import BaseLayout from './BaseLayout.astro';
+
+interface Props {
+  title: string;
+  subtitle?: string;
+  description?: string;
+  date: Date;
+  updated?: Date;
+  category: string;
+  cover?: string;
+}
+
+const { title, subtitle, description, date, updated, category, cover } = Astro.props;
+const formatDate = (value: Date) => value.toLocaleDateString('es-CL', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+<BaseLayout title={title} description={description ?? subtitle} current="blog">
+  <article>
+    <header class="article-header">
+      <div class="eyebrow">{category}</div>
+      <h1>{title}</h1>
+      {subtitle && <p class="article-subtitle">{subtitle}</p>}
+      <div class="article-meta">
+        Publicado el {formatDate(date)}{updated ? ` · actualizado el ${formatDate(updated)}` : ''}
+      </div>
+    </header>
+
+    {cover && (
+      <div class="article-cover">
+        <img src={cover} alt="" loading="eager" />
+      </div>
+    )}
+
+    <div class="article">
+      <slot />
+    </div>
+  </article>
+</BaseLayout>

@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const years = new Map<number, typeof posts>();
+for (const post of posts) {
+  const year = post.data.date.getFullYear();
+  if (!years.has(year)) years.set(year, []);
+  years.get(year)!.push(post);
+}
+const formatDay = (value: Date) => value.toLocaleDateString('es-CL', { day: '2-digit', month: 'short' });
+---
+<BaseLayout title="Archivo" current="archive">
+  <section class="page">
+    <div class="eyebrow">Archivo cronológico</div>
+    <h1>Archivo</h1>
+    <p class="lede">Una forma deliberadamente simple de volver atrás.</p>
+    <div class="archive" style="margin-top:55px">
+      {[...years.entries()].map(([year, yearPosts]) => (
+        <section class="archive-year">
+          <h2>{year}</h2>
+          <div class="archive-month">
+            {yearPosts.map((post) => (
+              <div class="archive-row">
+                <time datetime={post.data.date.toISOString()}>{formatDay(post.data.date)}</time>
+                <a href={`/blog/${post.id}/`}>{post.data.title}</a>
+              </div>
+            ))}
+          </div>
+        </section>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

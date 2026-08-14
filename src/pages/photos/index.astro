@@ -1,0 +1,28 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getCollection } from 'astro:content';
+
+const photos = (await getCollection('photos', ({ data }) => !data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const formatDate = (value: Date) => value.toLocaleDateString('es-CL', { year: 'numeric', month: 'short', day: 'numeric' });
+---
+<BaseLayout title="Fotografías" current="photos">
+  <section class="page">
+    <div class="eyebrow">Archivo visual</div>
+    <h1>Fotografías</h1>
+    <p class="lede">Una colección personal, sin likes, sin rankings y sin necesidad de publicar todo.</p>
+    <div class="photo-grid" style="margin-top:55px">
+      {photos.map((photo) => (
+        <article class="photo-card">
+          <a href={`/photos/${photo.id}/`}>
+            <img src={photo.data.image} alt={photo.data.description ?? photo.data.title} loading="lazy" />
+          </a>
+          <div class="photo-caption">
+            <a href={`/photos/${photo.id}/`}>{photo.data.title}</a>
+            <small>{formatDate(photo.data.date)}{photo.data.location ? ` · ${photo.data.location}` : ''}</small>
+          </div>
+        </article>
+      ))}
+    </div>
+  </section>
+</BaseLayout>

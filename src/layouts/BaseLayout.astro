@@ -1,0 +1,58 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  current?: string;
+}
+
+const {
+  title = 'Esquina personal',
+  description = 'Un sitio personal para escribir, guardar fotografías y conservar cosas a través del tiempo.',
+  current = ''
+} = Astro.props;
+
+const siteTitle = title === 'Esquina personal' ? title : `${title} — Esquina personal`;
+---
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#0b0b0b" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <title>{siteTitle}</title>
+  </head>
+  <body>
+    <div class="site-shell">
+      <header class="site-header">
+        <nav class="nav" aria-label="Navegación principal">
+          <a class="site-title" href="/">
+            Esquina personal
+            <small>un rincón en Internet</small>
+          </a>
+          <div class="nav-links">
+            <a href="/blog/" aria-current={current === 'blog' ? 'page' : undefined}>Blog</a>
+            <a href="/categories/" aria-current={current === 'categories' ? 'page' : undefined}>Categorías</a>
+            <a href="/archive/" aria-current={current === 'archive' ? 'page' : undefined}>Archivo</a>
+            <a href="/photos/" aria-current={current === 'photos' ? 'page' : undefined}>Fotografías</a>
+            <a href="/about/" aria-current={current === 'about' ? 'page' : undefined}>Sobre mí</a>
+          </div>
+        </nav>
+      </header>
+
+      <main>
+        <slot />
+      </main>
+
+      <footer class="footer">
+        <div class="footer-inner">
+          <span>Hecho para conservar cosas, no para medirlas.</span>
+          <span><a href="/rss.xml">RSS</a> · <a href="/archive/">Archivo</a></span>
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
